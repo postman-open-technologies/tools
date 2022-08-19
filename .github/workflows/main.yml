@@ -1,0 +1,83 @@
+name: Tools  
+on: [push]
+jobs:
+  deploy_source:
+    name: Deploy API Using Lambda
+    strategy:
+      matrix:
+        node-version: [12.x]
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install and build
+        run: |
+          npm ci
+          npm run build --if-present
+        env:
+          CI: true
+
+      - name: /tools get lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-g.zip tools/get/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-g
+            zip_file: m-s-tools-g.zip
+      - name: /tools post lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-po.zip tools/post/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-po
+            zip_file: m-s-tools-po.zip
+      - name: /tools/{tool_id} get lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-g.zip tools/tool_id/get/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-g
+            zip_file: m-s-tools-tool-g.zip
+      - name: /tools/{tool_id} put lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-pu.zip tools/tool_id/put/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-pu
+            zip_file: m-s-tools-tool-pu.zip
+      - name: /tools/{tool_id} delete lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-d.zip tools/tool_id/delete/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-d
+            zip_file: m-s-tools-tool-d.zip          
