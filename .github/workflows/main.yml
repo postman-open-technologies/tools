@@ -81,3 +81,39 @@ jobs:
             aws_region: us-west-1
             function_name: m-s-tools-tool-d
             zip_file: m-s-tools-tool-d.zip          
+      - name: /tools/{tool_id}/tags get lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-tags-g.zip tools/tool_id/tags/get/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-tags-g
+            zip_file: m-s-tools-tool-tags-g.zip
+      - name: /tools/{tool_id}/tags post lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-tags-po.zip tools/tool_id/tags/post/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-tags-po
+            zip_file: m-s-tools-tool-tags-po.zip
+      - name: /tools/{tool_id}/tags/{tag_id} delete lambda deploy zip
+        uses: postman-open-technologies/tools@main
+        with:
+            args: zip -qq -r m-s-tools-tool-tags-tag-d.zip tools/tool_id/tags/tag_id/delete/index.js node_modules
+      - name: tools get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-west-1
+            function_name: m-s-tools-tool-tags-tag-d
+            zip_file: m-s-tools-tool-tags-tag-d.zip            
